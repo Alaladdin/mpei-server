@@ -28,14 +28,7 @@ https://example.io/api/:method
 #### Request example
 
 ```javascript
-fetch('https://example.io/api/getPlaylist', {
-  method: 'GET',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    playlistId: 'PLOU2XLYxmsILVTiOlMJdo7RQS55jYhsMi',
-    maxResults: 5
-  })
-})
+fetch('https://example.io/api/getPlaylist/PLOU2XLYxmsILVTiOlMJdo7RQS55jYhsMi?maxResults=5');
 ```
 
 #### Response example

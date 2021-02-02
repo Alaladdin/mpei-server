@@ -6,7 +6,8 @@ const ttl = 3600; // 1 hour
 const cache = new CacheService(ttl);
 
 const GetPlaylist = async (req, res) => {
-  const { playlistId, maxResults } = req.body;
+  const { playlistId } = req.params;
+  const { maxResults } = req.query;
   const playlistCacheKey = `getPlaylist__${playlistId}`;
   const videosCacheKey = `getVideos__${maxResults}__${playlistId}`;
 
