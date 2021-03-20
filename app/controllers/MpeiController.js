@@ -1,5 +1,6 @@
 const YouTube = require('simple-youtube-api');
 const { CacheService } = require('../cache/CacheService');
+const Discord = require('../models/Discord');
 
 const youtube = new YouTube(process.env.YOUTUBE_API);
 const ttl = 3600; // 1 hour
@@ -19,15 +20,74 @@ const GetPlaylist = async (req, res) => {
         const { snippet } = video.raw;
         data[snippet.resourceId.videoId] = snippet.title;
       });
-      return res.status(200).json({ videos: { count: videos.length, data } });
+      return res.status(200).json({
+        videos: {
+          count: videos.length,
+          data,
+        },
+      });
     })
     .catch((err) => res.status(400).json({ message: err }));
 };
 
+// NotSupported
 const NotSupported = async (req, res) => res.status(400)
   .json({ message: 'method is not supported' });
 
+// getActuality
+const getActuality = async (req, res) => {
+  try {
+    return cache.get('actuality', async () => Discord.findOne({ actuality: Object })
+      .select({
+        actuality: 1,
+      })
+      .lean())
+      .then((data) => {
+        if (data) return res.status(200).json({ actuality: data.actuality });
+        return res.status(404).json({ error: 'Actuality not found in database' });
+      });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: 'some error was occurred' });
+  }
+};
+
+// setActuality
+const setActuality = async (req, res) => {
+  const { actuality } = req.body || {};
+  const clearSymbols = (mess) => mess.replaceAll('`', '');
+
+  const existsActuality = await Discord.findOne({ actuality: Object });
+  if (!existsActuality) {
+    const newAct = new Discord({ actuality: { content: clearSymbols(actuality) } });
+    await newAct.save();
+    return res.status(201).json({ newAct });
+  }
+
+  try {
+    const result = await Discord.findOneAndUpdate(
+      { actuality: Object },
+      {
+        actuality: {
+          content: clearSymbols(actuality),
+          date: Date.now(),
+        },
+      }, {
+        new: true,
+        upsert: true,
+      },
+    );
+
+    return res.status(200).json({ actuality: result.actuality });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'some error was occurred' });
+  }
+};
+
 module.exports = {
+  getActuality,
+  setActuality,
   GetPlaylist,
   NotSupported,
 };

@@ -1,6 +1,8 @@
 {
   "allowed": [
     "mpei.space",
-    "beta.mpei.space"
+    "beta.mpei.space",
+    "127.0.0.1:8000",
+    "192.168.1.1:8000"
   ]
 }
