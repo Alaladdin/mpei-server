@@ -1,6 +1,7 @@
 const YouTube = require('simple-youtube-api');
 const { CacheService } = require('../cache/CacheService');
 const Discord = require('../models/Discord');
+const replace = require('../utility/replace');
 
 const youtube = new YouTube(process.env.YOUTUBE_API);
 const ttl = 3600; // 1 hour
@@ -55,11 +56,10 @@ const getActuality = async (req, res) => {
 // setActuality
 const setActuality = async (req, res) => {
   const { actuality } = req.body || {};
-  const clearSymbols = (mess) => mess.replaceAll('`', '');
 
   const existsActuality = await Discord.findOne({ actuality: Object });
   if (!existsActuality) {
-    const newAct = new Discord({ actuality: { content: clearSymbols(actuality) } });
+    const newAct = new Discord({ actuality: { content: replace.all(actuality) } });
     await newAct.save();
     return res.status(201).json({ newAct });
   }
@@ -69,7 +69,7 @@ const setActuality = async (req, res) => {
       { actuality: Object },
       {
         actuality: {
-          content: clearSymbols(actuality),
+          content: replace.all(actuality),
           date: Date.now(),
         },
       }, {

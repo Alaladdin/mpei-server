@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const fs = require('fs');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
@@ -9,12 +8,14 @@ const mongoose = require('mongoose');
 
 const cors = require('cors');
 const route = require('./app/routes/MpeiRoute');
+const hosts = require('./hosts');
+
 mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
-const hosts = JSON.parse(fs.readFileSync('hosts.json'));
 const limit = rateLimit({
   max: 100, // max requests
   windowMs: 60 * 60 * 1000, // 1 Hour
@@ -39,7 +40,10 @@ app.use(express.json({ limit: '5kb' })); // Body limit
 app.use('', route);
 
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log('connected to mongo database'))
   .catch(console.error);
 
