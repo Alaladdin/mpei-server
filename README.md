@@ -1,5 +1,7 @@
 # MPEI server
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2517bf00c0ba4f7f9b848464b44f9d42)](https://app.codacy.com/gh/Alaladdin/mpei-server?utm_source=github.com&utm_medium=referral&utm_content=Alaladdin/mpei-server&utm_campaign=Badge_Grade_Settings)
+
 This application is used as the site server mpei.space but you may find it useful for your project
 
 Tested via [Postman](https://postman.com)
