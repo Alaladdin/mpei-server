@@ -1,9 +1,11 @@
 const YouTube = require('simple-youtube-api');
-const { CacheService } = require('../cache/CacheService');
+const fetch = require('node-fetch');
 const Discord = require('../models/Discord');
 const replace = require('../utility/replace');
+const { CacheService } = require('../cache/CacheService');
+const { getMpeiScheduleUrl, youtubeApi } = require('../../config');
 
-const youtube = new YouTube(process.env.YOUTUBE_API);
+const youtube = new YouTube(youtubeApi);
 const ttl = 3600; // 1 hour
 const cache = new CacheService(ttl);
 
@@ -85,7 +87,29 @@ const setActuality = async (req, res) => {
   }
 };
 
+const getSchedule = async (req, res) => {
+  const { start, finish } = req.query;
+  const url = getMpeiScheduleUrl(start, finish);
+
+  return fetch(url)
+    .then(async (r) => {
+      const schedule = await r.json();
+
+      // if request error
+      if (!r.ok) {
+        throw new Error(schedule.error);
+      }
+
+      return res.status(200).json({ schedule });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: 'some error was occurred' });
+    });
+};
+
 module.exports = {
+  getSchedule,
   getActuality,
   setActuality,
   GetPlaylist,

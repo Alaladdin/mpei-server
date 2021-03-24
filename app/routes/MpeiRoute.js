@@ -1,5 +1,6 @@
 const express = require('express');
 const {
+  getSchedule,
   getActuality,
   setActuality,
   GetPlaylist,
@@ -7,6 +8,8 @@ const {
 } = require('../controllers/MpeiController');
 
 const router = express.Router();
+
+router.route('/api/getSchedule/').get(getSchedule);
 
 router.route('/api/getPlaylist/:playlistId').get(GetPlaylist);
 

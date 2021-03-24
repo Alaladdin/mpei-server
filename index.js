@@ -9,13 +9,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const route = require('./app/routes/MpeiRoute');
 const hosts = require('./hosts');
+const { port, host, mongoUri } = require('./config');
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
+
 const limit = rateLimit({
   max: 100, // max requests
   windowMs: 60 * 60 * 1000, // 1 Hour
@@ -40,12 +40,11 @@ app.use(express.json({ limit: '5kb' })); // Body limit
 app.use('', route);
 
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log('connected to mongo database'))
   .catch(console.error);
 
-// eslint-disable-next-line no-console
-app.listen(PORT, HOST, () => console.log(`listening on port ${PORT}`));
+app.listen(port, host, () => console.log(`listening on port ${port}`));
