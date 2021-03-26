@@ -1,6 +1,7 @@
 const YouTube = require('simple-youtube-api');
 const fetch = require('node-fetch');
 const Discord = require('../models/Discord');
+const StudentsGroups = require('../models/StudentsGroups');
 const replace = require('../utility/replace');
 const { CacheService } = require('../cache/CacheService');
 const { getMpeiScheduleUrl, youtubeApi, cacheTime } = require('../../config');
@@ -31,10 +32,6 @@ const GetPlaylist = async (req, res) => {
     })
     .catch((err) => res.status(400).json({ message: err }));
 };
-
-// NotSupported
-const NotSupported = async (req, res) => res.status(400)
-  .json({ message: 'method is not supported' });
 
 // getActuality
 const getActuality = async (req, res) => {
@@ -108,7 +105,50 @@ const getSchedule = async (req, res) => {
     });
 };
 
+// addStudentsGroup
+const addStudentsGroup = async (req, res) => {
+  const { studentsGroup } = req.body || {};
+  const isGroupExists = await StudentsGroups.findOne({ id: studentsGroup.id });
+
+  try {
+    if (!isGroupExists) {
+      const newGroup = new StudentsGroups(studentsGroup);
+      await newGroup.save();
+      return res.status(201).json({ newGroup });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'some error was occurred' });
+  }
+
+  return res.status(400).json({ error: 'students group with this id already exists' });
+};
+
+// getStudentsGroups
+const getStudentsGroups = async (req, res) => {
+  try {
+    return cache.get('studentsGroups', async () => StudentsGroups.find()
+      .select({
+        id: 1,
+        title: 1,
+      })
+      .lean())
+      .then((data) => {
+        if (data) return res.status(200).json({ studentsGroups: data });
+        return res.status(404).json({ error: 'Students groups not found in database' });
+      });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: 'some error was occurred' });
+  }
+};
+
+// NotSupported
+const NotSupported = async (req, res) => res.status(400).json({ message: 'method is not supported' });
+
 module.exports = {
+  addStudentsGroup,
+  getStudentsGroups,
   getSchedule,
   getActuality,
   setActuality,

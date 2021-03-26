@@ -1,5 +1,7 @@
 const express = require('express');
 const {
+  addStudentsGroup,
+  getStudentsGroups,
   getSchedule,
   getActuality,
   setActuality,
@@ -8,6 +10,10 @@ const {
 } = require('../controllers/MpeiController');
 
 const router = express.Router();
+
+router.route('/api/addStudentsGroup/').post(addStudentsGroup);
+
+router.route('/api/getStudentsGroups/').get(getStudentsGroups);
 
 router.route('/api/getSchedule/').get(getSchedule);
 

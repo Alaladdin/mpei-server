@@ -1,6 +1,6 @@
 {
   "name": "mpei-server",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "type": "commonjs",
@@ -22,7 +22,7 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
-    "eslint": "^7.22.0",
+    "eslint": "^7.23.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-no-loops": "^0.3.0",
