@@ -1,11 +1,12 @@
 {
   "name": "mpei-server",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "watch": "nodemon ./app/index.js"
+    "start": "node ./app/index.js",
+    "dev": "nodemon ./app/index.js"
   },
   "author": "Alaladdin",
   "dependencies": {

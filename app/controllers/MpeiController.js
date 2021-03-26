@@ -3,11 +3,10 @@ const fetch = require('node-fetch');
 const Discord = require('../models/Discord');
 const replace = require('../utility/replace');
 const { CacheService } = require('../cache/CacheService');
-const { getMpeiScheduleUrl, youtubeApi } = require('../../config');
+const { getMpeiScheduleUrl, youtubeApi, cacheTime } = require('../../config');
 
 const youtube = new YouTube(youtubeApi);
-const ttl = 3600; // 1 hour
-const cache = new CacheService(ttl);
+const cache = new CacheService(cacheTime);
 
 const GetPlaylist = async (req, res) => {
   const { playlistId } = req.params;
@@ -68,7 +67,9 @@ const setActuality = async (req, res) => {
 
   try {
     const result = await Discord.findOneAndUpdate(
-      { actuality: Object },
+      {
+        actuality: Object,
+      },
       {
         actuality: {
           content: replace.all(actuality),
@@ -87,18 +88,17 @@ const setActuality = async (req, res) => {
   }
 };
 
+// getSchedule
 const getSchedule = async (req, res) => {
-  const { start, finish } = req.query;
-  const url = getMpeiScheduleUrl(start, finish);
+  const { start, finish, group } = req.query;
+  const url = getMpeiScheduleUrl(start, finish, group);
 
   return fetch(url)
     .then(async (r) => {
       const schedule = await r.json();
 
       // if request error
-      if (!r.ok) {
-        throw new Error(schedule.error);
-      }
+      if (!r.ok) throw new Error(schedule.error);
 
       return res.status(200).json({ schedule });
     })
