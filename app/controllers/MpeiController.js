@@ -112,7 +112,10 @@ const addStudentsGroup = async (req, res) => {
 
   try {
     if (!isGroupExists) {
-      const newGroup = new StudentsGroups(studentsGroup);
+      const newGroup = new StudentsGroups({
+        id: studentsGroup.id,
+        title: studentsGroup.title,
+      });
       await newGroup.save();
       return res.status(201).json({ newGroup });
     }
@@ -135,7 +138,7 @@ const getStudentsGroups = async (req, res) => {
       .lean())
       .then((data) => {
         if (data) return res.status(200).json({ studentsGroups: data });
-        return res.status(404).json({ error: 'Students groups not found in database' });
+        return res.status(404).json({ error: 'students group not found in database' });
       });
   } catch (err) {
     console.error(err.message);

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const StudentsGroups = new mongoose.Schema(
+const StudentsGroupsSchema = new mongoose.Schema(
   {
     id: {
       type: Number,
@@ -14,16 +14,11 @@ const StudentsGroups = new mongoose.Schema(
       required: true,
     },
   },
-  {
-    toObject: {
-      versionKey: false,
-    },
-  },
 );
 
-StudentsGroups.index({
+StudentsGroupsSchema.index({
+  title: 1,
   id: 1,
-  name: 1,
 });
 
-module.exports = mongoose.model('studentsGroups', StudentsGroups, 'studentsGroups');
+module.exports = mongoose.model('studentsGroups', StudentsGroupsSchema, 'studentsGroups');

@@ -15,11 +15,6 @@ const DiscordSchema = new mongoose.Schema(
       },
     },
   },
-  {
-    toObject: {
-      versionKey: false,
-    },
-  },
 );
 
 DiscordSchema.index({
