@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const route = require('./app/routes/MpeiRoute');
 const hosts = require('./hosts');
-const { port, host, mongoUri } = require('./config');
+const { port, host, mongoUri, isProd } = require('./config');
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
@@ -19,7 +19,9 @@ const app = express();
 const limit = rateLimit({
   max: 100, // max requests
   windowMs: 60 * 60 * 1000, // 1 Hour
-  message: 'Too many requests',
+  handler(req, res) {
+    return res.status(429).json({ message: 'Too many requests' });
+  },
 });
 
 app.use(limit);
@@ -38,6 +40,11 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '5kb' })); // Body limit
 app.use('', route);
+
+if (!isProd) {
+  console.clear();
+  // mongoose.set('debug', true);
+}
 
 mongoose
   .connect(mongoUri, {

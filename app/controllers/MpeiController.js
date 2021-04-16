@@ -1,10 +1,11 @@
 const YouTube = require('simple-youtube-api');
 const fetch = require('node-fetch');
-const Discord = require('../models/Discord');
+const Actuality = require('../models/Actuality');
 const StudentsGroups = require('../models/StudentsGroups');
 const replace = require('../utility/replace');
 const { CacheService } = require('../cache/CacheService');
 const { getMpeiScheduleUrl, youtubeApi, cacheTime } = require('../../config');
+const filterArray = require('../utility/filterArray');
 
 const youtube = new YouTube(youtubeApi);
 const cache = new CacheService(cacheTime);
@@ -36,7 +37,7 @@ const GetPlaylist = async (req, res) => {
 // getActuality
 const getActuality = async (req, res) => {
   try {
-    return cache.get('actuality', async () => Discord.findOne({ actuality: Object })
+    return cache.get('actuality', async () => Actuality.findOne({ actuality: Object })
       .select({
         actuality: 1,
       })
@@ -55,15 +56,15 @@ const getActuality = async (req, res) => {
 const setActuality = async (req, res) => {
   const { actuality } = req.body || {};
 
-  const existsActuality = await Discord.findOne({ actuality: Object });
+  const existsActuality = await Actuality.findOne({ actuality: Object });
   if (!existsActuality) {
-    const newAct = new Discord({ actuality: { content: replace.all(actuality) } });
+    const newAct = new Actuality({ actuality: { content: replace.all(actuality) } });
     await newAct.save();
     return res.status(201).json({ newAct });
   }
 
   try {
-    const result = await Discord.findOneAndUpdate(
+    const result = await Actuality.findOneAndReplace(
       {
         actuality: Object,
       },
@@ -92,10 +93,33 @@ const getSchedule = async (req, res) => {
 
   return fetch(url)
     .then(async (r) => {
-      const schedule = await r.json();
+      let schedule = await r.json() || [];
+      const scheduleLength = schedule ? schedule.length : 0;
+      const scheduleIndexesToDelete = [];
 
       // if request error
-      if (!r.ok) throw new Error(schedule.error);
+      if (!r.ok) throw new Error(r.statusText);
+
+      // compare two nearest array elements
+      for (let i = 0; i <= scheduleLength - 2; i += 2) {
+        const c = schedule[i]; // current elements
+        const n = schedule[i + 1]; // next element
+        if (!n) break; // stop loop, if next element not exists
+
+        if (
+          (c.date === n.date)
+          && (c.discipline === n.discipline)
+          && (c.kindOfWork === n.kindOfWork)
+          && (c.lecturer === n.lecturer)
+        ) {
+          // combine two array elements
+          schedule[i].endLesson = n.endLesson;
+          scheduleIndexesToDelete.push(i + 1);
+        }
+      }
+
+      // filter array
+      schedule = filterArray(schedule, scheduleIndexesToDelete);
 
       return res.status(200).json({ schedule });
     })

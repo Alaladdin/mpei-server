@@ -1,6 +1,9 @@
 require('dotenv').config();
 
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
+  isProd,
   youtubeApi: process.env.YOUTUBE_API,
   mongoUri: process.env.MONGO_URI,
   sessionSecret: process.env.SESSION_SECRET,
