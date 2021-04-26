@@ -1,4 +1,4 @@
-module.exports = function (arr: any[], indexesArr: number[]): any[] {
+module.exports = (arr: any[], indexesArr: number[]): any[] => {
   const newArr: any[] = [...arr];
 
   for (let i: number = indexesArr.length - 1; i >= 0; i--) {

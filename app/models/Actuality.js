@@ -14,9 +14,15 @@ const ActualitySchema = new mongoose.Schema(
         minlength: 10,
         trim: true,
       },
+      lazyContent: {
+        type: String,
+        minlength: 10,
+        trim: true,
+      },
       date: {
         type: Date,
         default: Date.now,
+        required: true,
         index: true,
       },
     },
@@ -26,13 +32,20 @@ const ActualitySchema = new mongoose.Schema(
 ActualitySchema.index({
   actuality: {
     content: 1,
+    lazyContent: 1,
     date: 1,
+    shortId: 1,
   },
 });
 
 // update Shortid on data update
-ActualitySchema.pre('findOneAndReplace', function updateShortid(next) {
-  this.update({}, { shortid: shortid.generate() });
+ActualitySchema.pre(['update', 'updateOne', 'save'], function updateShortid(next) {
+  this.update({}, {
+    actuality: {
+      shortId: shortid.generate(),
+    },
+  });
+
   next();
 });
 

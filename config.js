@@ -10,6 +10,7 @@ module.exports = {
   port: process.env.PORT || 3000,
   host: process.env.HOST || '0.0.0.0',
   cacheTime: process.env.CACHE_TIME || 3600,
+  maxRequests: isProd ? 100 : 0,
   getMpeiScheduleUrl(start, finish, group = process.env.GROUP) {
     const url = new URL(`http://ts.mpei.ru/api/schedule/group/${group}`);
 

@@ -54,32 +54,33 @@ const getActuality = async (req, res) => {
 
 // setActuality
 const setActuality = async (req, res) => {
-  const { actuality } = req.body || {};
-
+  const { content, lazyContent } = req.body.actuality || {};
   const existsActuality = await Actuality.findOne({ actuality: Object });
+  const { actuality: currAct } = existsActuality || {};
+
   if (!existsActuality) {
-    const newAct = new Actuality({ actuality: { content: replace.all(actuality) } });
+    const newAct = new Actuality({
+      actuality: {
+        content: content ? replace.all(content) : null,
+        lazyContent: lazyContent ? replace.all(lazyContent) : null,
+      },
+    });
     await newAct.save();
     return res.status(201).json({ newAct });
   }
 
   try {
-    const result = await Actuality.findOneAndReplace(
-      {
-        actuality: Object,
-      },
+    await existsActuality.updateOne(
       {
         actuality: {
-          content: replace.all(actuality),
+          content: content ? replace.all(content) : currAct.content,
+          lazyContent: lazyContent ? replace.all(lazyContent) : currAct.lazyContent,
           date: Date.now(),
         },
-      }, {
-        new: true,
-        upsert: true,
       },
     );
 
-    return res.status(200).json({ actuality: result.actuality });
+    return res.status(200).json({ message: 'success' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'some error was occurred' });
