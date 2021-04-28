@@ -1,5 +1,6 @@
 const YouTube = require('simple-youtube-api');
 const fetch = require('node-fetch');
+const pJson = require('../../package.json');
 const Actuality = require('../models/Actuality');
 const StudentsGroups = require('../models/StudentsGroups');
 const replace = require('../utility/replace');
@@ -10,7 +11,7 @@ const filterArray = require('../utility/filterArray');
 const youtube = new YouTube(youtubeApi);
 const cache = new CacheService(cacheTime);
 
-const GetPlaylist = async (req, res) => {
+const getPlaylist = async (req, res) => {
   const { playlistId } = req.params;
   const { maxResults } = req.query;
   const playlistCacheKey = `getPlaylist__${playlistId}`;
@@ -171,8 +172,15 @@ const getStudentsGroups = async (req, res) => {
   }
 };
 
-// NotSupported
-const NotSupported = async (req, res) => res.status(400).json({ message: 'method is not supported' });
+// getHealth
+const getHealth = async (req, res) => res.status(200).json({ message: 'ok' });
+
+const getVersion = async (req, res) => res.status(200).json({ version: pJson.version });
+
+const ping = async (req, res) => res.status(200).json({ message: 'pong' });
+
+// notSupported
+const notSupported = async (req, res) => res.status(400).json({ message: 'method is not supported' });
 
 module.exports = {
   addStudentsGroup,
@@ -180,6 +188,9 @@ module.exports = {
   getSchedule,
   getActuality,
   setActuality,
-  GetPlaylist,
-  NotSupported,
+  getPlaylist,
+  notSupported,
+  getHealth,
+  getVersion,
+  ping,
 };
