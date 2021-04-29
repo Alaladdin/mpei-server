@@ -1,4 +1,5 @@
 const express = require('express');
+const { apiPrefix } = require('../../config');
 const {
   addStudentsGroup,
   getStudentsGroups,
@@ -14,15 +15,15 @@ const {
 
 const router = express.Router();
 
-router.route('/api/addStudentsGroup/').post(addStudentsGroup);
-router.route('/api/getStudentsGroups/').get(getStudentsGroups);
-router.route('/api/getSchedule/').get(getSchedule);
-router.route('/api/getPlaylist/:playlistId').get(getPlaylist);
-router.route('/api/setActuality').post(setActuality);
-router.route('/api/getActuality').get(getActuality);
-router.route('/api/ping').get(ping);
-router.route('/api/health').get(getHealth);
-router.route('/api/version').get(getVersion);
-router.route('/api/:method').get(notSupported);
+router.route(`${apiPrefix}/addStudentsGroup/`).post(addStudentsGroup);
+router.route(`${apiPrefix}/getStudentsGroups/`).get(getStudentsGroups);
+router.route(`${apiPrefix}/getSchedule/`).get(getSchedule);
+router.route(`${apiPrefix}/getPlaylist/:playlistId`).get(getPlaylist);
+router.route(`${apiPrefix}/setActuality`).post(setActuality);
+router.route(`${apiPrefix}/getActuality`).get(getActuality);
+router.route(`${apiPrefix}/ping`).get(ping);
+router.route(`${apiPrefix}/health`).get(getHealth);
+router.route(`${apiPrefix}/version`).get(getVersion);
+router.route(`${apiPrefix}/:method`).get(notSupported);
 
 module.exports = router;
