@@ -1,12 +1,13 @@
 {
   "name": "mpei-server",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
     "start": "node ./app/index.js",
-    "dev": "nodemon ./app/index.js"
+    "dev": "nodemon ./app/index.js",
+    "deploy:prod": " pm2 deploy ecosystem.config.js production --force"
   },
   "author": "Alaladdin",
   "dependencies": {
