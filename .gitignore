@@ -4,4 +4,3 @@ docs
 .env
 package-lock.json
 pnpm-lock.yaml
-ecosystem.config.js
