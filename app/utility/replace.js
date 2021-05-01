@@ -7,9 +7,9 @@ module.exports = {
     return newText;
   },
   quotes(text, replaceTo = '') {
-    return text.replaceAll('`', replaceTo);
+    return text.toString().replaceAll('`', replaceTo);
   },
   emojis(text, replaceTo = '') {
-    return text.replaceAll(/:(\w+):/g, replaceTo);
+    return text.toString().replaceAll(/:(\w+):/g, replaceTo);
   },
 };
