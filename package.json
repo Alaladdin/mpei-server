@@ -13,7 +13,7 @@
   "author": "Alaladdin",
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.1",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",
     "helmet": "^4.5.0",
