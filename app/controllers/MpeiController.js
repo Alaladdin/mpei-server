@@ -179,8 +179,8 @@ const getVersion = async (req, res) => res.status(200).json({ version: pJson.ver
 
 const ping = async (req, res) => res.status(200).json({ message: 'pong' });
 
-// notSupported
-const notSupported = async (req, res) => res.status(400).json({ message: 'method is not supported' });
+// notFounded
+const notFounded = async (req, res) => res.status(404).json({ message: 'not found' });
 
 module.exports = {
   addStudentsGroup,
@@ -189,7 +189,7 @@ module.exports = {
   getActuality,
   setActuality,
   getPlaylist,
-  notSupported,
+  notFounded,
   getHealth,
   getVersion,
   ping,

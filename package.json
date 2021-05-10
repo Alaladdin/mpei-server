@@ -1,6 +1,6 @@
 {
   "name": "mpei-server",
-  "version": "1.8.5",
+  "version": "1.9.0",
   "description": "",
   "main": "index.js",
   "type": "commonjs",
@@ -13,11 +13,11 @@
   "author": "Alaladdin",
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.1",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",
-    "helmet": "^4.5.0",
-    "mongoose": "^5.12.5",
+    "helmet": "^4.6.0",
+    "mongoose": "^5.12.7",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1",
     "shortid": "^2.2.16",
@@ -25,9 +25,9 @@
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
-    "eslint": "^7.25.0",
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
+    "eslint": "^7.26.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-no-loops": "^0.3.0",

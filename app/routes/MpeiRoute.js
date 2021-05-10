@@ -7,7 +7,7 @@ const {
   getActuality,
   setActuality,
   getPlaylist,
-  notSupported,
+  notFounded,
   getHealth,
   getVersion,
   ping,
@@ -24,6 +24,6 @@ router.route(`${apiPrefix}/getActuality`).get(getActuality);
 router.route(`${apiPrefix}/ping`).get(ping);
 router.route(`${apiPrefix}/health`).get(getHealth);
 router.route(`${apiPrefix}/version`).get(getVersion);
-router.route(`${apiPrefix}/:method`).get(notSupported);
+router.route(`${apiPrefix}/:method`).get(notFounded);
 
 module.exports = router;
