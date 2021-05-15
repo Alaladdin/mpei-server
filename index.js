@@ -57,7 +57,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('connected to mongo database'))
+  .then(() => console.info('connected to mongo database'))
   .catch(console.error);
 
-app.listen(port, host, () => console.log(`listening on port ${port}`));
+app.listen(port, host, () => console.info(`listening on port ${port}`));
