@@ -14,7 +14,6 @@ const {
   host,
   mongoUri,
   maxRequests,
-  isProd,
 } = require('./config');
 
 mongoose.set('useCreateIndex', true);
@@ -46,11 +45,6 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '5kb' })); // Body limit
 app.use('', route);
-
-if (!isProd) {
-  console.clear();
-  // mongoose.set('debug', true);
-}
 
 mongoose
   .connect(mongoUri, {
