@@ -4,12 +4,14 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 const helmet = require('helmet');
-const mongoose = require('mongoose');
-
+const winston = require('winston');
+const expressWinston = require('express-winston');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const route = require('./app/routes/MpeiRoute');
 const hosts = require('./hosts');
 const {
+  isProd,
   port,
   host,
   mongoUri,
@@ -35,7 +37,9 @@ app.use(xss());
 app.use(cors({
   origin(origin, callback) {
     if (!origin) return callback(null, true);
+
     const url = new URL(origin);
+
     if (hosts.allowed.indexOf(url.host) === -1) {
       const msg = '😞 no CORS, no party!';
       return callback(new Error(msg), false);
@@ -44,6 +48,23 @@ app.use(cors({
   },
 }));
 app.use(express.json({ limit: '5kb' })); // Body limit
+app.use(expressWinston.logger({
+  meta: true,
+  expressFormat: true,
+  statusLevels: true,
+  transports: [
+    new winston.transports.File({
+      filename: `logs/${isProd ? 'all' : 'debug'}.json`,
+      level: isProd ? 'info' : 'debug',
+      format: winston.format.json(),
+    }),
+    new winston.transports.File({
+      filename: 'logs/errors.json',
+      level: 'error',
+      format: winston.format.json(),
+    }),
+  ],
+}));
 app.use('', route);
 
 mongoose

@@ -1,6 +1,6 @@
 {
   "name": "mpei-server",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "description": "",
   "main": "index.js",
   "type": "commonjs",
@@ -16,12 +16,14 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",
+    "express-winston": "^4.1.0",
     "helmet": "^4.6.0",
     "mongoose": "^5.12.12",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1",
     "shortid": "^2.2.16",
     "simple-youtube-api": "^5.2.1",
+    "winston": "^3.3.3",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
