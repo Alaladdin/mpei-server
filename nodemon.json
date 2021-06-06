@@ -1,0 +1,6 @@
+{
+  "ignore": [
+    "logs",
+    "node_modules"
+  ]
+}

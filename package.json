@@ -1,7 +1,6 @@
 {
   "name": "mpei-server",
-  "version": "1.10.0",
-  "description": "",
+  "version": "1.11.0",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
@@ -18,7 +17,7 @@
     "express-rate-limit": "^5.2.6",
     "express-winston": "^4.1.0",
     "helmet": "^4.6.0",
-    "mongoose": "^5.12.12",
+    "mongoose": "^5.12.13",
     "node-cache": "^5.1.2",
     "node-fetch": "^2.6.1",
     "shortid": "^2.2.16",
@@ -29,17 +28,17 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
-    "eslint": "^7.27.0",
+    "eslint": "^7.28.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-no-loops": "^0.3.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-sonarjs": "^0.7.1-117",
+    "eslint-plugin-sonarjs": "^0.8.0-125",
     "nodemon": "^2.0.7",
     "typescript": "^4.3.2"
   },
   "engines": {
-    "node": "15.x"
+    "node": "^15.x"
   }
 }

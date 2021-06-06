@@ -1,11 +1,13 @@
-const YouTube = require('simple-youtube-api');
 const fetch = require('node-fetch');
+const YouTube = require('simple-youtube-api');
 const pJson = require('../../package.json');
 const Actuality = require('../models/Actuality');
 const StudentsGroups = require('../models/StudentsGroups');
 const replace = require('../utility/replace');
 const { CacheService } = require('../cache/CacheService');
-const { getMpeiScheduleUrl, youtubeApi, cacheTime } = require('../../config');
+const {
+  authToken: serverAuthToken, youtubeApi, cacheTime, getMpeiScheduleUrl,
+} = require('../../config');
 const filterArray = require('../utility/filterArray');
 
 const youtube = new YouTube(youtubeApi);
@@ -55,6 +57,11 @@ const getActuality = async (req, res) => {
 
 // setActuality
 const setActuality = async (req, res) => {
+  const { authToken } = req.query;
+
+  if (!authToken) return res.status(403).json({ message: 'no auth token was provided' });
+  if (authToken !== serverAuthToken) return res.status(403).json({ message: 'incorrect auth token' });
+
   const { content, lazyContent } = req.body.actuality || {};
   const existsActuality = await Actuality.findOne({ actuality: Object });
   const { actuality: currAct } = existsActuality || {};
@@ -66,7 +73,9 @@ const setActuality = async (req, res) => {
         lazyContent: lazyContent ? replace.all(lazyContent) : null,
       },
     });
+
     await newAct.save();
+
     return res.status(201).json({ newAct });
   }
 
@@ -106,6 +115,7 @@ const getSchedule = async (req, res) => {
       for (let i = 0; i <= scheduleLength - 2; i += 2) {
         const c = schedule[i]; // current elements
         const n = schedule[i + 1]; // next element
+
         if (!n) break; // stop loop, if next element not exists
 
         if (

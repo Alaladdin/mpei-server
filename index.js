@@ -40,7 +40,7 @@ app.use(cors({
 
     const url = new URL(origin);
 
-    if (hosts.allowed.indexOf(url.host) === -1) {
+    if (!hosts.allowed.includes(url.host)) {
       const msg = '😞 no CORS, no party!';
       return callback(new Error(msg), false);
     }
