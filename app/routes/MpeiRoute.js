@@ -13,8 +13,8 @@ const {
   ping,
 } = require('../controllers/MpeiController');
 
-const { getConfig: getDiscordBotConfig, setConfig: setDiscordBotConfig } = require('../controllers/DiscordBotController');
-const { getConfig: getVKBotConfig, setConfig: setVKBotConfig } = require('../controllers/VKBotController');
+const { getStore: getDiscordBotStore, setStore: setDiscordBotStore } = require('../controllers/DiscordBotController');
+const { getStore: getVKBotStore, setStore: setVKBotStore } = require('../controllers/VKBotController');
 
 const router = express.Router();
 
@@ -28,10 +28,10 @@ router.route(`${apiPrefix}/ping`).get(ping);
 router.route(`${apiPrefix}/health`).get(getHealth);
 router.route(`${apiPrefix}/version`).get(getVersion);
 
-router.route(`${apiPrefix}/getDiscordBotConfig/`).get(getDiscordBotConfig);
-router.route(`${apiPrefix}/setDiscordBotConfig/`).post(setDiscordBotConfig);
-router.route(`${apiPrefix}/getVKBotConfig/`).get(getVKBotConfig);
-router.route(`${apiPrefix}/setVKBotConfig/`).post(setVKBotConfig);
+router.route(`${apiPrefix}/getDiscordBotStore/`).get(getDiscordBotStore);
+router.route(`${apiPrefix}/setDiscordBotStore/`).post(setDiscordBotStore);
+router.route(`${apiPrefix}/getVKBotStore/`).get(getVKBotStore);
+router.route(`${apiPrefix}/setVKBotStore/`).post(setVKBotStore);
 
 router.route(`${apiPrefix}/:method`).get(notFounded);
 
