@@ -15,6 +15,7 @@ const {
 
 const { getStore: getDiscordBotStore, setStore: setDiscordBotStore } = require('../controllers/DiscordBotController');
 const { getStore: getVKBotStore, setStore: setVKBotStore } = require('../controllers/VKBotController');
+const { getFAQ, setFAQ, deleteFAQ } = require('../controllers/FAQController');
 
 const router = express.Router();
 
@@ -32,6 +33,10 @@ router.route(`${apiPrefix}/getDiscordBotStore/`).get(getDiscordBotStore);
 router.route(`${apiPrefix}/setDiscordBotStore/`).post(setDiscordBotStore);
 router.route(`${apiPrefix}/getVKBotStore/`).get(getVKBotStore);
 router.route(`${apiPrefix}/setVKBotStore/`).post(setVKBotStore);
+
+router.route(`${apiPrefix}/getFAQ/`).get(getFAQ);
+router.route(`${apiPrefix}/setFAQ/`).post(setFAQ);
+router.route(`${apiPrefix}/deleteFAQ/`).post(deleteFAQ);
 
 router.route(`${apiPrefix}/:method`).get(notFounded);
 

@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
-const DiscordBotStore = new mongoose.Schema({
+const DiscordBotStoreSchema = new mongoose.Schema({
   store: {
     type: Object,
     required: true,
   },
 });
 
-DiscordBotStore.index({
+DiscordBotStoreSchema.index({
   store: 1,
 });
 
-module.exports = mongoose.model('discordBotStore', DiscordBotStore, 'discordBotStore');
+module.exports = mongoose.model('discordBotStore', DiscordBotStoreSchema, 'discordBotStore');
