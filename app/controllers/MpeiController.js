@@ -4,11 +4,11 @@ const pJson = require('../../package.json');
 const Actuality = require('../models/Actuality');
 const StudentsGroups = require('../models/StudentsGroups');
 const replace = require('../utility/replace');
+const filterArray = require('../utility/filterArray');
 const { CacheService } = require('../cache/CacheService');
 const {
   authToken: serverAuthToken, youtubeApi, cacheTime, getMpeiScheduleUrl,
 } = require('../../config');
-const filterArray = require('../utility/filterArray');
 
 const youtube = new YouTube(youtubeApi);
 const cache = new CacheService(cacheTime);
@@ -16,6 +16,9 @@ const cache = new CacheService(cacheTime);
 const getPlaylist = async (req, res) => {
   const { playlistId } = req.params;
   const { maxResults } = req.query;
+
+  if (!playlistId) return res.status(400).json({ message: 'playlistId was not provided' });
+
   const playlistCacheKey = `getPlaylist__${playlistId}`;
   const videosCacheKey = `getVideos__${maxResults}__${playlistId}`;
 
@@ -85,7 +88,6 @@ const setActuality = async (req, res) => {
         actuality: {
           content: content ? replace.all(content) : currAct.content,
           lazyContent: lazyContent ? replace.all(lazyContent) : currAct.lazyContent,
-          date: Date.now(),
         },
       },
     );
@@ -104,15 +106,14 @@ const getSchedule = async (req, res) => {
 
   return fetch(url)
     .then(async (r) => {
-      let schedule = await r.json() || [];
-      const scheduleLength = schedule ? schedule.length : 0;
-      const scheduleIndexesToDelete = [];
-
       // if request error
       if (!r.ok) throw new Error(r.statusText);
 
+      let schedule = await r.json() || [];
+      const scheduleIndexesToDelete = [];
+
       // compare two nearest array elements
-      for (let i = 0; i <= scheduleLength - 2; i += 2) {
+      for (let i = 0; i <= schedule.length - 2; i += 2) {
         const c = schedule[i]; // current elements
         const n = schedule[i + 1]; // next element
 
@@ -143,24 +144,27 @@ const getSchedule = async (req, res) => {
 
 // addStudentsGroup
 const addStudentsGroup = async (req, res) => {
+  const { authToken } = req.query;
+
+  if (!authToken) return res.status(403).json({ message: 'no auth token was provided' });
+  if (authToken !== serverAuthToken) return res.status(403).json({ message: 'incorrect auth token' });
+
   const { studentsGroup } = req.body || {};
-  const isGroupExists = await StudentsGroups.findOne({ id: studentsGroup.id });
+  const isGroupExists = !!await StudentsGroups.findOne({ id: studentsGroup.id });
+
+  if (isGroupExists) return res.status(400).json({ error: 'students group with this id already exists' });
 
   try {
-    if (!isGroupExists) {
-      const newGroup = new StudentsGroups({
-        id: studentsGroup.id,
-        title: studentsGroup.title,
-      });
-      await newGroup.save();
-      return res.status(201).json({ newGroup });
-    }
+    const newGroup = new StudentsGroups({
+      id: studentsGroup.id,
+      title: studentsGroup.title,
+    });
+    await newGroup.save();
+    return res.status(201).json({ newGroup });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'some error was occurred' });
   }
-
-  return res.status(400).json({ error: 'students group with this id already exists' });
 };
 
 // getStudentsGroups
@@ -185,12 +189,14 @@ const getStudentsGroups = async (req, res) => {
 // getHealth
 const getHealth = async (req, res) => res.status(200).json({ message: 'ok' });
 
+// getVersion
 const getVersion = async (req, res) => res.status(200).json({ version: pJson.version });
 
+// ping
 const ping = async (req, res) => res.status(200).json({ message: 'pong' });
 
 // notFounded
-const notFounded = async (req, res) => res.status(404).json({ message: 'not found' });
+const notFounded = async (req, res) => res.status(404).json({ message: 'method not found' });
 
 module.exports = {
   addStudentsGroup,

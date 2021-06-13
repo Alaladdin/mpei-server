@@ -43,6 +43,7 @@ ActualitySchema.pre(['update', 'updateOne', 'save'], function updateShortid(next
   this.update({}, {
     actuality: {
       shortId: shortid.generate(),
+      date: Date.now(),
     },
   });
 

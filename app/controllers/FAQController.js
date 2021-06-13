@@ -11,7 +11,9 @@ const getFAQ = async (req, res) => {
   if (authToken !== serverAuthToken) return res.status(403).json({ message: 'incorrect auth token' });
 
   try {
-    return cache.get('FAQ', async () => FAQ.findOne({}).select({ faq: 1 }).lean())
+    return cache.get('FAQ', async () => FAQ.findOne({})
+      .select({ faq: 1 })
+      .lean())
       .then((data) => {
         if (data) return res.status(200).json({ faq: data.faq });
         return res.status(404).json({ error: 'cannot find FAQ in database' });
