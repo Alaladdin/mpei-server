@@ -1,8 +1,6 @@
-const { cacheTime, authToken: serverAuthToken } = require('../../config');
 const FAQ = require('../models/FAQ');
-const { CacheService } = require('../cache/CacheService');
-
-const cache = new CacheService(cacheTime);
+const { cacheTime, authToken: serverAuthToken } = require('../../config');
+const { clearCache } = require('../setup/cache');
 
 const getFAQ = async (req, res) => {
   const { authToken } = req.query;
@@ -11,9 +9,10 @@ const getFAQ = async (req, res) => {
   if (authToken !== serverAuthToken) return res.status(403).json({ message: 'incorrect auth token' });
 
   try {
-    return cache.get('FAQ', async () => FAQ.findOne({})
+    return FAQ.findOne({})
       .select({ faq: 1 })
-      .lean())
+      .lean()
+      .cache(cacheTime, 'FAQ')
       .then((data) => {
         if (data) return res.status(200).json({ faq: data.faq });
         return res.status(404).json({ error: 'cannot find FAQ in database' });
@@ -24,7 +23,7 @@ const getFAQ = async (req, res) => {
   }
 };
 
-const setFAQ = async (req, res) => {
+const addFAQ = async (req, res) => {
   const { authToken } = req.query;
 
   if (!authToken) return res.status(403).json({ message: 'no auth token was provided' });
@@ -32,6 +31,8 @@ const setFAQ = async (req, res) => {
 
   const { faq } = req.body || {};
   const existsFAQ = await FAQ.findOne({});
+
+  await clearCache('FAQ');
 
   if (existsFAQ) {
     try {
@@ -69,11 +70,12 @@ const deleteFAQ = async (req, res) => {
 
   existsFAQ.faq.splice(itemToDelete, 1);
   await existsFAQ.save();
+  await clearCache('FAQ');
   return res.status(201).json(existsFAQ);
 };
 
 module.exports = {
   getFAQ,
-  setFAQ,
+  addFAQ,
   deleteFAQ,
 };

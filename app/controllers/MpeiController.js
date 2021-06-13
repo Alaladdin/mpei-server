@@ -5,13 +5,12 @@ const Actuality = require('../models/Actuality');
 const StudentsGroups = require('../models/StudentsGroups');
 const replace = require('../utility/replace');
 const filterArray = require('../utility/filterArray');
-const { CacheService } = require('../cache/CacheService');
+const { clearCache } = require('../setup/cache');
 const {
   authToken: serverAuthToken, youtubeApi, cacheTime, getMpeiScheduleUrl,
 } = require('../../config');
 
 const youtube = new YouTube(youtubeApi);
-const cache = new CacheService(cacheTime);
 
 const getPlaylist = async (req, res) => {
   const { playlistId } = req.params;
@@ -19,11 +18,11 @@ const getPlaylist = async (req, res) => {
 
   if (!playlistId) return res.status(400).json({ message: 'playlistId was not provided' });
 
-  const playlistCacheKey = `getPlaylist__${playlistId}`;
-  const videosCacheKey = `getVideos__${maxResults}__${playlistId}`;
+  // const playlistCacheKey = `getPlaylist__${playlistId}`;
+  // const videosCacheKey = `getVideos__${maxResults}__${playlistId}`;
 
-  return cache.get(playlistCacheKey, () => youtube.getPlaylistByID(playlistId))
-    .then((playlist) => cache.get(videosCacheKey, () => playlist.getVideos(maxResults)))
+  return youtube.getPlaylistByID(playlistId)
+    .then((playlist) => playlist.getVideos(maxResults))
     .then((videos) => {
       const data = {};
       videos.forEach((video) => {
@@ -43,11 +42,10 @@ const getPlaylist = async (req, res) => {
 // getActuality
 const getActuality = async (req, res) => {
   try {
-    return cache.get('actuality', async () => Actuality.findOne({ actuality: Object })
-      .select({
-        actuality: 1,
-      })
-      .lean())
+    return Actuality.findOne({ actuality: Object })
+      .select({ actuality: 1 })
+      .lean()
+      .cache(cacheTime, 'actuality')
       .then((data) => {
         if (data) return res.status(200).json({ actuality: data.actuality });
         return res.status(404).json({ error: 'Actuality not found in database' });
@@ -68,6 +66,8 @@ const setActuality = async (req, res) => {
   const { content, lazyContent } = req.body.actuality || {};
   const existsActuality = await Actuality.findOne({ actuality: Object });
   const { actuality: currAct } = existsActuality || {};
+
+  await clearCache('actuality');
 
   if (!existsActuality) {
     const newAct = new Actuality({
@@ -142,6 +142,26 @@ const getSchedule = async (req, res) => {
     });
 };
 
+// getStudentsGroups
+const getStudentsGroups = async (req, res) => {
+  try {
+    return StudentsGroups.find()
+      .select({
+        id: 1,
+        title: 1,
+      })
+      .lean()
+      .cache(cacheTime, 'studentsGroups')
+      .then((data) => {
+        if (data) return res.status(200).json({ studentsGroups: data });
+        return res.status(404).json({ error: 'students group not found in database' });
+      });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: 'some error was occurred' });
+  }
+};
+
 // addStudentsGroup
 const addStudentsGroup = async (req, res) => {
   const { authToken } = req.query;
@@ -159,29 +179,13 @@ const addStudentsGroup = async (req, res) => {
       id: studentsGroup.id,
       title: studentsGroup.title,
     });
+
     await newGroup.save();
+    await clearCache('studentsGroups');
+
     return res.status(201).json({ newGroup });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'some error was occurred' });
-  }
-};
-
-// getStudentsGroups
-const getStudentsGroups = async (req, res) => {
-  try {
-    return cache.get('studentsGroups', async () => StudentsGroups.find()
-      .select({
-        id: 1,
-        title: 1,
-      })
-      .lean())
-      .then((data) => {
-        if (data) return res.status(200).json({ studentsGroups: data });
-        return res.status(404).json({ error: 'students group not found in database' });
-      });
-  } catch (err) {
-    console.error(err.message);
     return res.status(500).json({ error: 'some error was occurred' });
   }
 };

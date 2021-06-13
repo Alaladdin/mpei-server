@@ -1,4 +1,6 @@
 require('dotenv').config();
+require('./app/setup/cache');
+
 const app = require('./app/setup/express');
 const mongoose = require('./app/setup/mongoose');
 const { port, host, mongoUri } = require('./config');

@@ -2,7 +2,7 @@ const express = require('express');
 const { apiPrefix } = require('../../config');
 const { getStore: getDiscordBotStore, setStore: setDiscordBotStore } = require('../controllers/DiscordBotController');
 const { getStore: getVKBotStore, setStore: setVKBotStore } = require('../controllers/VKBotController');
-const { getFAQ, setFAQ, deleteFAQ } = require('../controllers/FAQController');
+const { getFAQ, addFAQ, deleteFAQ } = require('../controllers/FAQController');
 const {
   getStudentsGroups,
   addStudentsGroup,
@@ -37,7 +37,7 @@ router.route(`${apiPrefix}/setVKBotStore/`).post(setVKBotStore);
 
 // FAQ
 router.route(`${apiPrefix}/getFAQ/`).get(getFAQ);
-router.route(`${apiPrefix}/setFAQ/`).post(setFAQ);
+router.route(`${apiPrefix}/addFAQ/`).post(addFAQ);
 router.route(`${apiPrefix}/deleteFAQ/`).delete(deleteFAQ);
 
 router.route(`${apiPrefix}/:method`).get(notFounded);
