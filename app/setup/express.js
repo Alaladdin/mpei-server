@@ -28,7 +28,7 @@ app.use(cors({
 
     const url = new URL(origin);
 
-    if (!hosts.allowed.includes(url.host)) {
+    if (!hosts.includes(url.host)) {
       const msg = '😞 no CORS, no party!';
       return callback(new Error(msg), false);
     }
@@ -41,16 +41,17 @@ app.use(expressWinston.logger({
   statusLevels: true,
   transports: [
     new winston.transports.File({
-      filename: `../../logs/${isProd ? 'all' : 'debug'}.json`,
+      filename: `logs/${isProd ? 'all' : 'debug'}.json`,
       level: isProd ? 'info' : 'debug',
       format: winston.format.json(),
     }),
     new winston.transports.File({
-      filename: '../../logs/errors.json',
+      filename: 'logs/errors.json',
       level: 'error',
       format: winston.format.json(),
     }),
   ],
 }));
 app.use('', route);
+
 module.exports = app;
