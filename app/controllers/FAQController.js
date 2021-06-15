@@ -15,11 +15,11 @@ const getFAQ = async (req, res) => {
       .cache(cacheTime, 'FAQ')
       .then((data) => {
         if (data) return res.status(200).json({ faq: data.faq });
-        return res.status(404).json({ error: 'cannot find FAQ in database' });
+        return res.status(404).json({ message: 'cannot find FAQ in database' });
       });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'some error was occurred' });
+    return res.status(500).json({ message: 'some error was occurred' });
   }
 };
 
@@ -35,6 +35,9 @@ const addFAQ = async (req, res) => {
   await clearCache('FAQ');
 
   if (existsFAQ) {
+    const existsQuestion = existsFAQ.faq.find((faqItem) => faqItem.question === faq.question);
+    if (existsQuestion) return res.status(400).json({ message: 'question already exists' });
+
     try {
       await existsFAQ.faq.push(faq);
       await existsFAQ.save();
@@ -42,7 +45,7 @@ const addFAQ = async (req, res) => {
       return res.status(200).json({ message: 'success' });
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: 'some error was occurred' });
+      return res.status(500).json({ message: 'some error was occurred' });
     }
   }
 
@@ -60,13 +63,13 @@ const deleteFAQ = async (req, res) => {
   if (authToken !== serverAuthToken) return res.status(403).json({ message: 'incorrect auth token' });
 
   const { question } = req.body || {};
-  if (!question) return res.status(401).json({ message: 'no question to delete was provided' });
+  if (!question) return res.status(400).json({ message: 'no question to delete was provided' });
 
   const existsFAQ = await FAQ.findOne({});
-  if (!existsFAQ) return res.status(404).json({ error: 'cannot find FAQ in database' });
+  if (!existsFAQ) return res.status(404).json({ message: 'cannot find FAQ in database' });
 
   const itemToDelete = existsFAQ.faq.findIndex((item) => item.question === question);
-  if (itemToDelete === -1) return res.status(404).json({ error: 'cannot find that question in database' });
+  if (itemToDelete === -1) return res.status(404).json({ message: 'cannot find that question in database' });
 
   existsFAQ.faq.splice(itemToDelete, 1);
   await existsFAQ.save();

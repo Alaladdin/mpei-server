@@ -15,11 +15,11 @@ const getStore = async (req, res) => {
       .cache(cacheTime, 'VKBotStore')
       .then((data) => {
         if (data) return res.status(200).json({ store: data.store });
-        return res.status(404).json({ error: 'cannot find store in database' });
+        return res.status(404).json({ message: 'cannot find store in database' });
       });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'some error was occurred' });
+    return res.status(500).json({ message: 'some error was occurred' });
   }
 };
 
@@ -40,7 +40,7 @@ const setStore = async (req, res) => {
       return res.status(200).json({ message: 'success' });
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: 'some error was occurred' });
+      return res.status(500).json({ message: 'some error was occurred' });
     }
   }
 

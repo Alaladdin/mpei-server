@@ -9,7 +9,7 @@ const redisConfig = {
 };
 
 if (redisPass) redisConfig.password = redisPass;
-console.log(redisConfig);
+
 cachegoose(mongoose, redisConfig);
 
 const clearCache = async (key, cb) => {

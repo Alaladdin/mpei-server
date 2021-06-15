@@ -48,11 +48,11 @@ const getActuality = async (req, res) => {
       .cache(cacheTime, 'actuality')
       .then((data) => {
         if (data) return res.status(200).json({ actuality: data.actuality });
-        return res.status(404).json({ error: 'Actuality not found in database' });
+        return res.status(404).json({ message: 'Actuality not found in database' });
       });
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ error: 'some error was occurred' });
+    return res.status(500).json({ message: 'some error was occurred' });
   }
 };
 
@@ -95,7 +95,7 @@ const setActuality = async (req, res) => {
     return res.status(200).json({ message: 'success' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'some error was occurred' });
+    return res.status(500).json({ message: 'some error was occurred' });
   }
 };
 
@@ -138,7 +138,7 @@ const getSchedule = async (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(500).json({ error: 'some error was occurred' });
+      return res.status(500).json({ message: 'some error was occurred' });
     });
 };
 
@@ -154,11 +154,11 @@ const getStudentsGroups = async (req, res) => {
       .cache(cacheTime, 'studentsGroups')
       .then((data) => {
         if (data) return res.status(200).json({ studentsGroups: data });
-        return res.status(404).json({ error: 'students group not found in database' });
+        return res.status(404).json({ message: 'students group not found in database' });
       });
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({ error: 'some error was occurred' });
+    return res.status(500).json({ message: 'some error was occurred' });
   }
 };
 
@@ -172,7 +172,7 @@ const addStudentsGroup = async (req, res) => {
   const { studentsGroup } = req.body || {};
   const isGroupExists = !!await StudentsGroups.findOne({ id: studentsGroup.id });
 
-  if (isGroupExists) return res.status(400).json({ error: 'students group with this id already exists' });
+  if (isGroupExists) return res.status(400).json({ message: 'students group with this id already exists' });
 
   try {
     const newGroup = new StudentsGroups({
@@ -186,7 +186,7 @@ const addStudentsGroup = async (req, res) => {
     return res.status(201).json({ newGroup });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'some error was occurred' });
+    return res.status(500).json({ message: 'some error was occurred' });
   }
 };
 
