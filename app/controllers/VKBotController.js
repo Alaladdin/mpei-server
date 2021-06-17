@@ -2,6 +2,8 @@ const VKBotStore = require('../models/VKBotStore');
 const { cacheTime, authToken: serverAuthToken } = require('../../config');
 const { clearCache } = require('../setup/cache');
 
+const cacheKey = 'VKBotStore';
+
 const getStore = async (req, res) => {
   const { authToken } = req.query;
 
@@ -12,7 +14,7 @@ const getStore = async (req, res) => {
     return VKBotStore.findOne({})
       .select({ store: 1 })
       .lean()
-      .cache(cacheTime, 'VKBotStore')
+      .cache(cacheTime, cacheKey)
       .then((data) => {
         if (data) return res.status(200).json({ store: data.store });
         return res.status(404).json({ message: 'cannot find store in database' });
@@ -32,7 +34,7 @@ const setStore = async (req, res) => {
   const { store } = req.body || {};
   const existsStore = await VKBotStore.findOne({});
 
-  await clearCache('VKBotStore');
+  await clearCache(cacheKey);
 
   if (existsStore) {
     try {

@@ -2,6 +2,8 @@ const DiscordBotStore = require('../models/DiscordBotStore');
 const { cacheTime, authToken: serverAuthToken } = require('../../config');
 const { clearCache } = require('../setup/cache');
 
+const cacheKey = 'DiscordBotStore';
+
 const getStore = async (req, res) => {
   const { authToken } = req.query;
 
@@ -12,7 +14,7 @@ const getStore = async (req, res) => {
     return DiscordBotStore.findOne({})
       .select({ store: 1 })
       .lean()
-      .cache(cacheTime, 'DiscordBotStore')
+      .cache(cacheTime, cacheKey)
       .then((data) => {
         if (data) return res.status(200).json({ store: data.store });
         return res.status(404).json({ message: 'cannot find store in database' });
@@ -32,7 +34,7 @@ const setStore = async (req, res) => {
   const { store } = req.body || {};
   const existsStore = await DiscordBotStore.findOne({});
 
-  await clearCache('DiscordBotStore');
+  await clearCache(cacheKey);
 
   if (existsStore) {
     try {

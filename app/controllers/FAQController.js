@@ -2,6 +2,8 @@ const FAQ = require('../models/FAQ');
 const { cacheTime, authToken: serverAuthToken } = require('../../config');
 const { clearCache } = require('../setup/cache');
 
+const cacheKey = 'FAQ';
+
 const getFAQ = async (req, res) => {
   const { authToken } = req.query;
 
@@ -12,7 +14,7 @@ const getFAQ = async (req, res) => {
     return FAQ.findOne({})
       .select({ faq: 1 })
       .lean()
-      .cache(cacheTime, 'FAQ')
+      .cache(cacheTime, cacheKey)
       .then((data) => {
         if (data) return res.status(200).json({ faq: data.faq });
         return res.status(404).json({ message: 'cannot find FAQ in database' });
@@ -32,7 +34,7 @@ const addFAQ = async (req, res) => {
   const { faq } = req.body || {};
   const existsFAQ = await FAQ.findOne({});
 
-  await clearCache('FAQ');
+  await clearCache(cacheKey);
 
   if (existsFAQ) {
     const existsQuestion = existsFAQ.faq.find((faqItem) => faqItem.question === faq.question);
@@ -73,7 +75,7 @@ const deleteFAQ = async (req, res) => {
 
   existsFAQ.faq.splice(itemToDelete, 1);
   await existsFAQ.save();
-  await clearCache('FAQ');
+  await clearCache(cacheKey);
   return res.status(201).json(existsFAQ);
 };
 
