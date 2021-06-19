@@ -64,12 +64,11 @@ const setActuality = async (req, res) => {
   if (authToken !== serverAuthToken) return res.status(403).json({ message: 'incorrect auth token' });
 
   const { content, lazyContent } = req.body.actuality || {};
-  const existsActuality = await Actuality.findOne({ actuality: Object });
-  const { actuality: currAct } = existsActuality || {};
+  const isActualityExists = await Actuality.countDocuments({ actuality: Object });
 
   await clearCache('actuality');
 
-  if (!existsActuality) {
+  if (!isActualityExists) {
     const newAct = new Actuality({
       actuality: {
         content: content ? replace.all(content) : null,
@@ -79,20 +78,25 @@ const setActuality = async (req, res) => {
 
     await newAct.save();
 
-    return res.status(201).json({ newAct });
+    return res.status(201).json({ actuality: newAct.actuality });
   }
 
   try {
-    await existsActuality.updateOne(
+    const currentActuality = await Actuality.findOne({ actuality: Object });
+    const { actuality } = currentActuality;
+
+    const newAct = await Actuality.findOneAndUpdate(
+      { actuality: Object },
       {
         actuality: {
-          content: content ? replace.all(content) : currAct.content,
-          lazyContent: lazyContent ? replace.all(lazyContent) : currAct.lazyContent,
+          content: content ? replace.all(content) : actuality.content,
+          lazyContent: lazyContent ? replace.all(lazyContent) : actuality.lazyContent,
         },
       },
+      { new: true },
     );
 
-    return res.status(200).json({ message: 'success' });
+    return res.status(200).json({ actuality: newAct.actuality });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'some error was occurred' });

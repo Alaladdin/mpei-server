@@ -5,6 +5,6 @@ const allowed = [
   'beta.mpei.space',
 ];
 
-if (!isProd) allowed.push('localhost:8000', '127.0.0.1:8000', '192.168.1.1:8000');
+if (!isProd) allowed.push('localhost:8080', 'localhost:8000', '127.0.0.1:8000', '192.168.1.1:8000');
 
 module.exports = allowed;

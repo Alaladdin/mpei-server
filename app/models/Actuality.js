@@ -39,7 +39,7 @@ ActualitySchema.index({
 });
 
 // update Shortid on data update
-ActualitySchema.pre(['update', 'updateOne', 'save'], function updateShortid(next) {
+ActualitySchema.pre(['findOneAndUpdate', 'update', 'updateOne', 'save'], function updateShortid(next) {
   this.update({}, {
     actuality: {
       shortId: shortid.generate(),

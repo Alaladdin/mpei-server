@@ -3,11 +3,13 @@ const ms = require('ms');
 
 const isProd = process.env.NODE_ENV === 'production';
 
+// todo run params to mongo dev
+
 module.exports = {
   isProd,
   authToken: process.env.AUTH_TOKEN,
   youtubeApi: process.env.YOUTUBE_API,
-  mongoUri: process.env.MONGO_URI,
+  mongoUri: isProd ? process.env.MONGO_URI : process.env.MONGO_URI_DEV,
   port: process.env.PORT || 3000,
   host: process.env.HOST || '0.0.0.0',
   cacheTime: process.env.CACHE_TIME || ms('1d'),

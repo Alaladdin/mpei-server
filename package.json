@@ -1,6 +1,6 @@
 {
   "name": "mpei-server",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
