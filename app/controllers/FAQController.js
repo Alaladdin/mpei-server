@@ -1,5 +1,6 @@
 const FAQ = require('../models/FAQ');
 const { cacheTime, authToken: serverAuthToken } = require('../../config');
+const isObject = require('../utility/isObject');
 const { clearCache } = require('../setup/cache');
 
 const cacheKey = 'FAQ';
@@ -32,6 +33,9 @@ const addFAQ = async (req, res) => {
   if (authToken !== serverAuthToken) return res.status(403).json({ message: 'incorrect auth token' });
 
   const { faq } = req.body || {};
+
+  if (!isObject || !faq.question || !faq.answer) return res.status(400).json({ message: 'invalid data format' });
+
   const existsFAQ = await FAQ.findOne({});
 
   await clearCache(cacheKey);
@@ -41,10 +45,15 @@ const addFAQ = async (req, res) => {
     if (existsQuestion) return res.status(400).json({ message: 'question already exists' });
 
     try {
-      await existsFAQ.faq.push(faq);
+      await existsFAQ.faq.push({ question: faq.question, answer: faq.answer });
       await existsFAQ.save();
 
-      return res.status(200).json({ message: 'success' });
+      return res.status(200).json({
+        faq: {
+          question: faq.question,
+          answer: faq.answer,
+        },
+      });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: 'some error was occurred' });
@@ -55,7 +64,7 @@ const addFAQ = async (req, res) => {
   const newFAQ = new FAQ({ faq });
   await newFAQ.save();
 
-  return res.status(201).json(newFAQ);
+  return res.status(201).json({ faq: newFAQ.faq });
 };
 
 const deleteFAQ = async (req, res) => {

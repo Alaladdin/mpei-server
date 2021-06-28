@@ -1,18 +1,17 @@
 require('dotenv').config();
-const ms = require('ms');
 
+const params = process.argv.slice(2); // cli params
 const isProd = process.env.NODE_ENV === 'production';
-
-// todo run params to mongo dev
+const isMongoDev = !isProd && params.includes('--mongo-dev');
 
 module.exports = {
   isProd,
   authToken: process.env.AUTH_TOKEN,
   youtubeApi: process.env.YOUTUBE_API,
-  mongoUri: isProd ? process.env.MONGO_URI : process.env.MONGO_URI_DEV,
+  mongoUri: !isMongoDev ? process.env.MONGO_URI : process.env.MONGO_URI_DEV,
   port: process.env.PORT || 3000,
   host: process.env.HOST || '0.0.0.0',
-  cacheTime: process.env.CACHE_TIME || ms('1d'),
+  cacheTime: process.env.CACHE_TIME || 86400,
   maxRequests: isProd ? 200 : 0,
   apiPrefix: process.env.API_PREFIX || '',
   redisHost: isProd ? process.env.REDIS_HOST : 'localhost',
