@@ -1,4 +1,3 @@
-const ms = require('ms');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
@@ -13,7 +12,7 @@ const { isProd, maxRequests } = require('../../config');
 const app = express();
 const limit = rateLimit({
   max: maxRequests,
-  windowMs: ms('1h'),
+  windowMs: 3600000,
   handler(req, res) {
     return res.status(429).json({ message: 'Too many requests' });
   },
